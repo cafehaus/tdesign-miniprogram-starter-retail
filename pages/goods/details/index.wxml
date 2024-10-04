@@ -1,4 +1,9 @@
-<view class="goods-detail-page">
+<view wx:if="{{spuId}}">
+  <store-product appid="{{storeAppid}}" product-id="{{spuId}}"></store-product>
+</view>
+
+
+<!-- <view class="goods-detail-page">
   <view class="goods-head">
     <t-swiper
       wx:if="{{details.images.length > 0}}"
@@ -150,4 +155,4 @@
     bind:promotionChange="promotionChange"
   />
 </view>
-<t-toast id="t-toast" />
+<t-toast id="t-toast" /> -->

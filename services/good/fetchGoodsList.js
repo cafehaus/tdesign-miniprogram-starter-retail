@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { config } from '../../config/index';
+import { getCategoryGoodsList } from '../api'
 
 /** 获取商品列表 */
 function mockFetchGoodsList(params) {
@@ -31,9 +32,18 @@ function mockFetchGoodsList(params) {
 /** 获取商品列表 */
 export function fetchGoodsList(params) {
   if (config.useMock) {
-    return mockFetchGoodsList(params);
+    // return mockFetchGoodsList(params);
   }
-  return new Promise((resolve) => {
-    resolve('real api');
+  return new Promise(async (resolve) => {
+    const res = await getCategoryGoodsList(params)
+    console.log(res);
+    res.products.map(item => {
+      item.spuId = item.product_id
+      item.thumb = item.head_imgs[0]
+      item.title = item.title
+      item.price = item.min_price
+      item.originPrice = item.maxLinePrice
+    })
+    resolve(res);
   });
 }

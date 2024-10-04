@@ -1,5 +1,9 @@
-import { fetchHome } from '../../services/home/home';
-import { fetchGoodsList } from '../../services/good/fetchGoods';
+import {
+  fetchHome
+} from '../../services/home/home';
+import {
+  fetchGoodsList
+} from '../../services/good/fetchGoods';
 import Toast from 'tdesign-miniprogram/toast/index';
 
 Page({
@@ -13,13 +17,19 @@ Page({
     autoplay: true,
     duration: '500',
     interval: 5000,
-    navigation: { type: 'dots' },
-    swiperImageProps: { mode: 'scaleToFill' },
+    navigation: {
+      type: 'dots'
+    },
+    swiperImageProps: {
+      mode: 'scaleToFill'
+    },
   },
 
   goodListPagination: {
     index: 0,
     num: 20,
+    nextKey: '',
+    hasMore: true
   },
 
   privateData: {
@@ -54,7 +64,10 @@ Page({
     this.setData({
       pageLoading: true,
     });
-    fetchHome().then(({ swiper, tabList }) => {
+    fetchHome().then(({
+      swiper,
+      tabList
+    }) => {
       this.setData({
         tabList,
         imgSrcs: swiper,
@@ -74,37 +87,68 @@ Page({
   },
 
   async loadGoodsList(fresh = false) {
+    if (!this.goodListPagination.hasMore) {
+      return
+    }
     if (fresh) {
       wx.pageScrollTo({
         scrollTop: 0,
       });
     }
 
-    this.setData({ goodsListLoadStatus: 1 });
+    this.setData({
+      goodsListLoadStatus: 1
+    });
 
     const pageSize = this.goodListPagination.num;
     let pageIndex = this.privateData.tabIndex * pageSize + this.goodListPagination.index + 1;
     if (fresh) {
       pageIndex = 0;
+      this.goodListPagination.nextKey = ''
     }
 
     try {
-      const nextList = await fetchGoodsList(pageIndex, pageSize);
+      // const nextList = await fetchGoodsList(pageIndex, pageSize);
+      // this.setData({
+      //   goodsList: fresh ? nextList : this.data.goodsList.concat(nextList),
+      //   goodsListLoadStatus: 0,
+      // });
+      console.log('nextList========================1');
+      const res = await fetchGoodsList({
+        showdetail: 1,
+        next_key: fresh ? '' : this.goodListPagination.nextKey
+      });
+      const nextList = res.productList
+      const next_key = res.next_key
+      const total = res.total_num
+      console.log(res);
+      console.log('nextList========================2');
+      console.log(nextList);
+      console.log(next_key);
       this.setData({
         goodsList: fresh ? nextList : this.data.goodsList.concat(nextList),
         goodsListLoadStatus: 0,
       });
 
+      this.goodListPagination.nextKey = next_key;
+      this.goodListPagination.hasMore = total < this.data.goodsList.length;
+
       this.goodListPagination.index = pageIndex;
       this.goodListPagination.num = pageSize;
     } catch (err) {
-      this.setData({ goodsListLoadStatus: 3 });
+      this.setData({
+        goodsListLoadStatus: 3
+      });
     }
   },
 
   goodListClickHandle(e) {
-    const { index } = e.detail;
-    const { spuId } = this.data.goodsList[index];
+    const {
+      index
+    } = e.detail;
+    const {
+      spuId
+    } = this.data.goodsList[index];
     wx.navigateTo({
       url: `/pages/goods/details/index?spuId=${spuId}`,
     });
@@ -119,11 +163,17 @@ Page({
   },
 
   navToSearchPage() {
-    wx.navigateTo({ url: '/pages/goods/search/index' });
+    wx.navigateTo({
+      url: '/pages/goods/search/index'
+    });
   },
 
-  navToActivityDetail({ detail }) {
-    const { index: promotionID = 0 } = detail || {};
+  navToActivityDetail({
+    detail
+  }) {
+    const {
+      index: promotionID = 0
+    } = detail || {};
     wx.navigateTo({
       url: `/pages/promotion-detail/index?promotion_id=${promotionID}`,
     });

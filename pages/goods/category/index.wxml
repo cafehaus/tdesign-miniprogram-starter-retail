@@ -1,6 +1,6 @@
 <view class="wrap">
   <goods-category
-    level="{{3}}"
+    level="{{2}}"
     custom-class="goods-category-class"
     category="{{list}}"
     bind:changeCategory="onChange"

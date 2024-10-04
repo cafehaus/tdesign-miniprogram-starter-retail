@@ -26,6 +26,9 @@ Page({
   pageSize: 30,
   total: 0,
 
+  levelId: '', // 分类对应的商品列表分类 id 参数
+  nextKey: '', // 分类对应的商品列表分页参数
+
   handleFilterChange(e) {
     const { layout, overall, sorts } = e.detail;
     this.pageNum = 1;
@@ -40,7 +43,7 @@ Page({
 
   generalQueryData(reset = false) {
     const { filter, keywords, minVal, maxVal } = this.data;
-    const { pageNum, pageSize } = this;
+    const { pageNum, pageSize, levelId, nextKey } = this;
     const { sorts, overall } = filter;
     const params = {
       sort: 0, // 0 综合，1 价格
@@ -48,6 +51,17 @@ Page({
       pageSize: 30,
       keyword: keywords,
     };
+
+    // 分类对应的商品列表
+    if (levelId) {
+      const ids = levelId.split('-')
+      params.level1id = ids[0]
+      params.level2id = ids[1] || 0
+      params.showdetail = 1
+      if (nextKey) {
+        params.page_context = nextKey
+      }
+    }
 
     if (sorts) {
       params.sort = 1;
@@ -80,9 +94,9 @@ Page({
     try {
       const result = await fetchGoodsList(params);
       const code = 'Success';
-      const data = result;
+      const data = result?.resp;
       if (code.toUpperCase() === 'SUCCESS') {
-        const { spuList, totalCount = 0 } = data;
+        const { products: spuList, total_count: totalCount = 0, page_context } = data;
         if (totalCount === 0 && reset) {
           this.total = totalCount;
           this.setData({
@@ -97,6 +111,7 @@ Page({
           return;
         }
 
+        this.nextKey = page_context
         const _goodsList = reset ? spuList : goodsList.concat(spuList);
         const _loadMoreStatus = _goodsList.length === totalCount ? 2 : 0;
         this.pageNum = params.pageNum || 1;
@@ -124,7 +139,8 @@ Page({
     });
   },
 
-  onLoad() {
+  onLoad(options) {
+    this.levelId = options.levelId
     this.init(true);
   },
 

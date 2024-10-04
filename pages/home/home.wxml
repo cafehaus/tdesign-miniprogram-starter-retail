@@ -28,7 +28,7 @@
   </view>
 </view>
 <view class="home-page-container">
-  <view class="home-page-tabs">
+  <!-- <view class="home-page-tabs">
     <t-tabs
       t-class="t-tabs"
       t-class-active="tabs-external__active"
@@ -45,7 +45,7 @@
         value="{{item.key}}"
       />
     </t-tabs>
-  </view>
+  </view> -->
 
   <goods-list
     wr-class="goods-list-container"

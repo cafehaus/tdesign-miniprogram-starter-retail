@@ -20,6 +20,7 @@ const obj2Params = (obj = {}, encode = false) => {
 
   return result.join('&');
 };
+import { config } from '../../../config/index'
 
 Page({
   data: {
@@ -88,6 +89,8 @@ Page({
     duration: 500,
     interval: 5000,
     soldNum: 0, // 已售数量
+
+    storeAppid: config.storeAppid
   },
 
   handlePopupHide() {
@@ -436,8 +439,8 @@ Page({
     this.setData({
       spuId: spuId,
     });
-    this.getDetail(spuId);
-    this.getCommentsList(spuId);
-    this.getCommentsStatistics(spuId);
+    // this.getDetail(spuId);
+    // this.getCommentsList(spuId);
+    // this.getCommentsStatistics(spuId);
   },
 });

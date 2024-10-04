@@ -1,6 +1,8 @@
 export const config = {
   /** 是否使用mock代替api返回 */
   useMock: true,
+  domain: 'blog.minapper.com',
+  storeAppid: 'wx69ce400d3c5572fc'
 };
 
 export const cdnBase =
